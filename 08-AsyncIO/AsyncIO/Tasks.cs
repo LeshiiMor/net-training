@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,8 +24,16 @@ namespace AsyncIO
         /// <returns>The sequence of downloaded url content</returns>
         public static IEnumerable<string> GetUrlContent(this IEnumerable<Uri> uris) 
         {
+            using(WebClient client = new WebClient())
+            {
+                List<string> results = new List<string>();
+                foreach (var url in uris)
+                {
+                    results.Add(client.DownloadString(url));
+                }
+                return results;
+            }
             // TODO : Implement GetUrlContent
-            throw new NotImplementedException();
         }
 
 
@@ -50,12 +62,21 @@ namespace AsyncIO
         /// </summary>
         /// <param name="resource">Uri of resource</param>
         /// <returns>MD5 hash</returns>
-        public static Task<string> GetMD5Async(this Uri resource)
+        public static async Task<string> GetMD5Async(this Uri resource)
         {
             // TODO : Implement GetMD5Async
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            WebClient client = new WebClient();
+            MD5 md5 = MD5.Create();
+            var result = await client.DownloadDataTaskAsync(resource);
+            var hash = md5.ComputeHash(result);
+            StringBuilder sOutput = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
+            {
+                sOutput.Append(hash[i].ToString("X2"));
+            }
+            return sOutput.ToString();
         }
-
     }
 
 

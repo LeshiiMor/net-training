@@ -50,7 +50,10 @@ namespace AsyncIO
         public static IEnumerable<string> GetUrlContentAsync(this IEnumerable<Uri> uris, int maxConcurrentStreams)
         {
             // TODO : Implement GetUrlContentAsync
-            throw new NotImplementedException();
+            List<string> data = new List<string>();
+            WebClient client = new WebClient();
+            Parallel.ForEach(uris,new ParallelOptions() {MaxDegreeOfParallelism = maxConcurrentStreams }, async url =>data.Add(await client.DownloadStringTaskAsync(url)));
+            return data;
         }
 
 

@@ -10,25 +10,29 @@ namespace IQueryableTask
         public IQueryable CreateQuery(Expression expression)
         {
             // TODO: Implement CreateQuery
-            throw new NotImplementedException();
+            return new People(expression);
+
         }
 
         public IQueryable<TResult> CreateQuery<TResult>(Expression expression)
         {
             // TODO: Implement CreateQuery
-            throw new NotImplementedException();
+            return (IQueryable<TResult>)new People(expression);
         }
 
         public object Execute(Expression expression)
         {
             // TODO: Implement Execute
-            throw new NotImplementedException();
+            PersonService isEnumerable = new PersonService();
+            var result = isEnumerable.Search(GetSqlQuery(expression));
+            return result;
         }
 
         public TResult Execute<TResult>(Expression expression)
         {
             // TODO: Implement Execute
-            throw new NotImplementedException();
+
+            return (TResult)Execute(expression);
 
             // HINT: Use GetSqlQuery to build query and pass the query to PersonService
         }
@@ -41,7 +45,8 @@ namespace IQueryableTask
         public string GetSqlQuery(Expression expression)
         {
             // TODO: Implement GetYqlQuery
-            throw new NotImplementedException();
+            SqlVisitor visitor = new SqlVisitor();
+            return visitor.GetQuery(expression);
 
             // HINT: This method is not part of IQueryProvider interface and is used here only for tests.
             // HINT: To transform expression to sql query create a class derived from ExpressionVisitor
